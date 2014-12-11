@@ -23,13 +23,13 @@
 from distutils.core import setup
 
 setup(
-    name = 'deepin-app-engine',
+    name = 'dae',
     version = '0.1',
     description = 'Deepin desktop application engine',
     long_description = 'Deepin desktop application engine with PyQt Webkit core',
     author = 'iceleaf',
     author_email = 'kaisheng.ye@gmail.com',
-    url = 'https://gitcafe.com/deepin/deepin-app-engine/',
+    url = 'https://gitcafe.com/deepin/dae/',
     license = 'GPL-3',
     platforms = ['all'],
     packages = ['dae'],
