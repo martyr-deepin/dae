@@ -38,9 +38,6 @@ from dae.datajar import DataJar
 from dae.filesystem import FileSystem
 from dae.plugins import PluginsManager
 
-current_dir = os.path.dirname(os.path.realpath(__file__))
-root_dir = os.path.dirname(current_dir)
-
 class DAEClient:
     def __init__(self, app_dir):
 
@@ -71,6 +68,8 @@ class DAEClient:
 
         assets.manifest['icon'] = os.path.join(app_dir, assets.manifest["icon"])
         assets.manifest['app_dir'] = app_dir
+        if "--debug" in sys.argv:
+            assets.manifest['debug'] = True
 
         index_path = os.path.join(app_dir, assets.manifest['path'] + 'index.html')
         self.window = Window(None, index_path)

@@ -26,7 +26,7 @@ import re
 import dae.assets as assets
 from dae.webpage import WebPage
 
-from PyQt5.QtWebKitWidgets import QWebView
+from PyQt5.QtWebKitWidgets import QWebView, QWebPage
 from PyQt5.Qt import Qt, QWebSettings, QDrag, QUrl
 
 class WebView(QWebView):
@@ -38,6 +38,8 @@ class WebView(QWebView):
         self.drag = QDrag(self)
         self.dragStartPos = None
         self.webPage = WebPage()
+        if not assets.manifest['debug']:
+            self.webPage.action(QWebPage.Reload).setVisible(False)
         self.setPage(self.webPage)
         self.mainFrame = self.page().mainFrame()
         self.setAttribute(Qt.WA_DeleteOnClose, True)
