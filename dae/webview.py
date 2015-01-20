@@ -39,7 +39,27 @@ class WebView(QWebView):
         self.dragStartPos = None
         self.webPage = WebPage()
         if not assets.manifest['debug']:
-            self.webPage.action(QWebPage.Reload).setVisible(False)
+            actions = [
+                    "OpenLink",
+                    "OpenLinkInNewWindow",
+                    "OpenLinkInThisWindow",
+                    "OpenFrameInNewWindow",
+                    "DownloadLinkToDisk",
+                    "CopyLinkToClipboard",
+                    "OpenImageInNewWindow",
+                    "DownloadImageToDisk",
+                    "CopyImageToClipboard",
+                    "CopyImageUrlToClipboard",
+                    "Back",
+                    "Forward",
+                    "Reload",
+                    "ReloadAndBypassCache",
+                    ]
+            for action in actions:
+                action_id = getattr(QWebPage, action)
+                q_action = self.webPage.action(action_id)
+                if q_action:
+                    q_action.setVisible(False)
         self.setPage(self.webPage)
         self.mainFrame = self.page().mainFrame()
         self.setAttribute(Qt.WA_DeleteOnClose, True)
