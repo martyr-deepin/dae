@@ -29,6 +29,7 @@ import json
 import codecs
 
 from PyQt5.Qt import QApplication
+from PyQt5.QtCore import QTranslator, QLocale, QLibraryInfo
 
 import dae.assets as assets
 from dae.codec import Codec
@@ -60,6 +61,11 @@ class DAEClient:
         assets.codec = Codec()
         assets.fs = FileSystem()
         assets.dataJar = DataJar()
+
+        translator = QTranslator()
+        translateLocaleName = "qt_" + QLocale.system().name()
+        translator.load(translateLocaleName, QLibraryInfo.location(QLibraryInfo.TranslationsPath))
+        app.installTranslator(translator)
 
         if assets.manifest.get("plugins"):
             plugindir = os.path.join(app_dir, assets.manifest["plugins"])
