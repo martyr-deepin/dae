@@ -13,24 +13,19 @@
 		app.setResizerSize(5);
 		app.setFrameless(true);
 		app.setTransBackground(true);
+		app.setClosable(true);
 		app.show();
 	};
 
 	var initEvent = function(){
-		var closeEvent = function(){
-			app.setClosable(confirm('真的要关闭吗？'));
-		};
 		var stateChangeEvent = function(){
-			console.log(this);
 			$('#wrap').toggleClass('maximized', app.isMaximized() || app.isFullScreen());
 		};
 		app.addEvent({
-			close: closeEvent,
 			statechange: stateChangeEvent
 		});
 		$(window).bind({
 			beforeunload: function(){
-				app.removeEvent('close', closeEvent);
 				app.removeEvent('statechange', stateChangeEvent);
 			}
 		});

@@ -28,6 +28,7 @@ from dae.webpage import WebPage
 
 from PyQt5.QtWebKitWidgets import QWebView, QWebPage
 from PyQt5.Qt import Qt, QWebSettings, QDrag, QUrl
+from PyQt5.QtGui import QRegion
 
 class WebView(QWebView):
     def __init__(self, parent, url = ''):
@@ -81,6 +82,31 @@ class WebView(QWebView):
         self.mainFrame.javaScriptWindowObjectCleared.connect(self.setJavaScriptObject)
         self.mainFrame.iconChanged.connect(self.changeIcon)
         self.load(url)
+
+    def setRoundedCorners(self, rect, radius):
+        region = QRegion(rect, QRegion.Rectangle)
+
+        # top left
+        _round = QRegion(rect.x(), rect.y(), 2*radius, 2*radius, QRegion.Ellipse)
+        _corner  = QRegion(rect.x(), rect.y(), radius, radius, QRegion.Rectangle)
+        region = region.subtracted(_corner.subtracted(_round))
+
+        # top right
+        _round = QRegion(rect.x() + rect.width() - 2*radius, rect.y(), 2*radius, 2*radius, QRegion.Ellipse)
+        _corner  = QRegion(rect.x() + rect.width() - radius, rect.y(), radius, radius, QRegion.Rectangle)
+        region = region.subtracted(_corner.subtracted(_round))
+
+        # bottom left
+        _round = QRegion(rect.x(), rect.y() + rect.height() - 2*radius, 2*radius, 2*radius, QRegion.Ellipse)
+        _corner  = QRegion(rect.x(), rect.y() + rect.height() - radius, radius, radius, QRegion.Rectangle)
+        region = region.subtracted(_corner.subtracted(_round))
+
+        # bottom right
+        _round = QRegion(rect.x() + rect.width() - 2*radius, rect.y() + rect.height() - 2*radius, 2*radius, 2*radius, QRegion.Ellipse)
+        _corner  = QRegion(rect.x() + rect.width() - radius, rect.y() + rect.height() - radius, radius, radius, QRegion.Rectangle)
+        region = region.subtracted(_corner.subtracted(_round))
+
+        self.setMask(region)
 
     def load(self, url = ''):
         p = re.compile('(^file:\/\/)|(^http:\/\/)|(^https:\/\/)|(^data:)')

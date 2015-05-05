@@ -520,8 +520,11 @@ class Window(ShadowWindow):
         self.dragParams['globalY'] = event.globalY()
         self.dragParams['width'] = self.width()
         self.dragParams['height'] = self.height()
-        if self.dragParams['type'] != Window.Move and self.isFrameless() and not self.isMaximized() and not self.isFullScreen():
-            self.dragStart()
+        if self.dragParams['type'] != Window.Move \
+            and self.isFrameless() \
+            and not self.isMaximized() \
+            and not self.isFullScreen():
+                self.dragStart()
 
     def mouseReleaseEvent(self, event):
         self.dragStop()
@@ -602,6 +605,11 @@ class Window(ShadowWindow):
                 event.oldSize().width(), event.oldSize().height(),
                 event.size().width(), event.size().height()
                 )
+
+        # workround: it can't be set Antialiasing in setRoundedCorners method
+        # use `self.radius - 1` to workround the problem
+        if self.radius > 1:
+            self.webView.setRoundedCorners(self.webView.rect(), self.radius - 1)
 
     def moveEvent(self, event):
         pos = event.pos()

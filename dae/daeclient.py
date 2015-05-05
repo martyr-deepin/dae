@@ -81,3 +81,7 @@ class DAEClient:
         self.window = Window(None, index_path)
 
         sys.exit(app.exec_())
+
+if __name__ == '__main__':
+    if os.path.isdir(sys.argv[-1]):
+        DAEClient(sys.argv[-1])
