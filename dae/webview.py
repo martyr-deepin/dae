@@ -72,7 +72,6 @@ class WebView(QWebView):
         webSettings.setAttribute(QWebSettings.DnsPrefetchEnabled, True)
         webSettings.setAttribute(QWebSettings.XSSAuditingEnabled, True)
         webSettings.setAttribute(QWebSettings.CSSGridLayoutEnabled, True)
-        webSettings.setAttribute(QWebSettings.ScrollAnimatorEnabled, True)
         webSettings.setAttribute(QWebSettings.DeveloperExtrasEnabled, assets.manifest['debug'])
         webSettings.setAttribute(QWebSettings.JavascriptCanOpenWindows, True)
         webSettings.setAttribute(QWebSettings.JavascriptCanCloseWindows, True)
