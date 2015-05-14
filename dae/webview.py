@@ -147,7 +147,8 @@ class WebView(QWebView):
         event.ignore()
 
     def mouseMoveEvent(self, event):
-        super(WebView, self).mouseMoveEvent(event)
+        if not self.window.dragParams["draging"]:
+            super(WebView, self).mouseMoveEvent(event)
         event.ignore()
 
     def mouseReleaseEvent(self, event):
