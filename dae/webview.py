@@ -27,8 +27,8 @@ import dae.assets as assets
 from dae.webpage import WebPage
 
 from PyQt5.QtWebKitWidgets import QWebView, QWebPage
-from PyQt5.Qt import Qt, QWebSettings, QDrag, QUrl
-from PyQt5.QtGui import QRegion
+from PyQt5.Qt import Qt, QWebSettings, QDrag, QUrl, pyqtSlot
+from PyQt5.QtGui import QRegion, QDropEvent
 
 class WebView(QWebView):
     def __init__(self, parent, url = ''):
@@ -161,3 +161,7 @@ class WebView(QWebView):
         self.page().close()
         self.eval('DAE = null')
         super(WebView, self).close()
+
+    @pyqtSlot(QDropEvent)
+    def dropEvent(self, qDropEvent: QDropEvent):
+        pass

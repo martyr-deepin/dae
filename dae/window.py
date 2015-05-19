@@ -23,6 +23,7 @@
 from PyQt5.QtCore import QObject, QByteArray, QBuffer, pyqtSlot, pyqtSignal, QSize, QPoint
 from PyQt5.Qt import Qt, QApplication, QDialog, QEvent, QPalette, QPainter, QImage, QIcon
 from PyQt5.QtWidgets import QShortcut, qApp
+from PyQt5.QtGui import QCursor
 
 import dae.assets as assets
 from dae.api import API
@@ -641,6 +642,15 @@ class Window(ShadowWindow):
     def showCenter(self):
         screen = qApp.primaryScreen()
         geometry = screen.availableGeometry()
+        x = geometry.x() + (geometry.width() - self.width())/2
+        y = geometry.y() + (geometry.height() - self.height())/2
+        self.move(x, y)
+        self.show()
+
+    @pyqtSlot()
+    def showCurrentScreenCenter(self):
+        screen = qApp.desktop()
+        geometry = screen.screenGeometry(screen.screenNumber(QCursor.pos()))
         x = geometry.x() + (geometry.width() - self.width())/2
         y = geometry.y() + (geometry.height() - self.height())/2
         self.move(x, y)
