@@ -31,6 +31,8 @@ from dae.webview import WebView
 from dae.shadowwindow import ShadowWindow
 import dae.xutils as xutils
 
+LEVEL0, LEVEL1, LEVEL2, LEVEL3, LEVEL4 = 0, 1, 2, 3, 4
+
 class Window(ShadowWindow):
 
     Move = 0b0000
@@ -50,8 +52,12 @@ class Window(ShadowWindow):
     onmouseenter = pyqtSignal()
     onmouseleave = pyqtSignal()
 
+    windowLevel = LEVEL0
+
+
     def __init__(self, parent = None, url = '', width = None, height = None, isDialog = False):
         super(Window, self).__init__(parent if isDialog else None)
+
         self.assets = assets
         assets.windows.append(self)
         if width is None:
@@ -398,12 +404,7 @@ class Window(ShadowWindow):
     @pyqtSlot()
     def minimize(self):
         if self.isMinimizable():
-            ## NOTE: This is bug of Qt5 that showMinimized() just can work once after restore window.
-            ## I change window state before set it as WindowMinimized to fixed this bug!
-
-            ## Do minimized.
-            self.setWindowState(Qt.WindowMinimized)
-            self.setVisible(True)
+            self.showMinimized()
 
     # 还原
     @pyqtSlot()
@@ -414,7 +415,7 @@ class Window(ShadowWindow):
     @pyqtSlot()
     def maximize(self):
         if self.isMaximizable():
-            xutils.do_maximize(self.getXWindow())
+            self.showMaximized()
 
     # 全屏
     @pyqtSlot()
@@ -637,6 +638,24 @@ class Window(ShadowWindow):
             event.accept()
         else:
             event.ignore()
+
+    def event(self, event):
+        if event.type() == QEvent.WindowStateChange:
+            if int(self.windowState()) == 3 and \
+               event.oldState() == Qt.WindowMaximized:
+               self.windowLevel = LEVEL1
+            # 3 -> minimized
+            # minimized -> normal
+            elif self.windowLevel == LEVEL1:
+               self.windowLevel = LEVEL2
+            # normal -> minimized
+            elif self.windowLevel == LEVEL2:
+               self.windowLevel = LEVEL3
+            # minimized -> normal -> maximized
+            elif self.windowLevel == LEVEL3:
+               self.maximize()
+               self.windowLevel = LEVEL0
+        return super(Window, self).event(event)
 
     @pyqtSlot()
     def showCenter(self):
