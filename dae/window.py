@@ -549,6 +549,8 @@ class Window(ShadowWindow):
                 self.webView.setCursor(Qt.SizeFDiagCursor)
             elif self.dragParams['draging']:
                 self.webView.setCursor(Qt.ArrowCursor)
+            else:
+                self.webView.unsetCursor()
 
         # 判断窗口拖动
         dragType = self.dragParams['type']
