@@ -39,7 +39,7 @@ class ShadowWindow(QtWidgets.QWidget):
         self.radius = 0
         self.shadowMargins = None
         self.setShadowWidth(10)
-        self.setRadius(3)
+        self.setRadius(5)
 
         self.verticalLayout = QtWidgets.QVBoxLayout(self)
         self.verticalLayout.setObjectName("verticalLayout")
@@ -77,6 +77,7 @@ class ShadowWindow(QtWidgets.QWidget):
         if self.shadowMargins:
             rect = rect.marginsRemoved(self.shadowMargins)
         rect = QtCore.QRectF(rect)
+
         painter = QtGui.QPainter(self)
         painter.setRenderHint(QtGui.QPainter.Antialiasing)
 

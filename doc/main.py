@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+import sys
+sys.path.insert(0, "..")
+
 from dae.daeclient import DAEClient
 from dae.utils import get_parent_dir
 

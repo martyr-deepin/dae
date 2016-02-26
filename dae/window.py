@@ -23,12 +23,15 @@
 from PyQt5.QtCore import QObject, QByteArray, QBuffer, pyqtSlot, pyqtSignal, QSize, QPoint
 from PyQt5.Qt import Qt, QApplication, QDialog, QEvent, QPalette, QPainter, QImage, QIcon
 from PyQt5.QtWidgets import QShortcut, qApp
+from PyQt5.QtGui import QCursor
 
 import dae.assets as assets
 from dae.api import API
 from dae.webview import WebView
 from dae.shadowwindow import ShadowWindow
 import dae.xutils as xutils
+
+LEVEL0, LEVEL1, LEVEL2, LEVEL3, LEVEL4 = 0, 1, 2, 3, 4
 
 class Window(ShadowWindow):
 
@@ -49,8 +52,12 @@ class Window(ShadowWindow):
     onmouseenter = pyqtSignal()
     onmouseleave = pyqtSignal()
 
+    windowLevel = LEVEL0
+
+
     def __init__(self, parent = None, url = '', width = None, height = None, isDialog = False):
         super(Window, self).__init__(parent if isDialog else None)
+
         self.assets = assets
         assets.windows.append(self)
         if width is None:
@@ -397,12 +404,7 @@ class Window(ShadowWindow):
     @pyqtSlot()
     def minimize(self):
         if self.isMinimizable():
-            ## NOTE: This is bug of Qt5 that showMinimized() just can work once after restore window.
-            ## I change window state before set it as WindowMinimized to fixed this bug!
-
-            ## Do minimized.
-            self.setWindowState(Qt.WindowMinimized)
-            self.setVisible(True)
+            self.showMinimized()
 
     # 还原
     @pyqtSlot()
@@ -413,7 +415,7 @@ class Window(ShadowWindow):
     @pyqtSlot()
     def maximize(self):
         if self.isMaximizable():
-            xutils.do_maximize(self.getXWindow())
+            self.showMaximized()
 
     # 全屏
     @pyqtSlot()
@@ -520,8 +522,11 @@ class Window(ShadowWindow):
         self.dragParams['globalY'] = event.globalY()
         self.dragParams['width'] = self.width()
         self.dragParams['height'] = self.height()
-        if self.dragParams['type'] != Window.Move and self.isFrameless() and not self.isMaximized() and not self.isFullScreen():
-            self.dragStart()
+        if self.dragParams['type'] != Window.Move \
+            and self.isFrameless() \
+            and not self.isMaximized() \
+            and not self.isFullScreen():
+                self.dragStart()
 
     def mouseReleaseEvent(self, event):
         self.dragStop()
@@ -544,6 +549,8 @@ class Window(ShadowWindow):
                 self.webView.setCursor(Qt.SizeFDiagCursor)
             elif self.dragParams['draging']:
                 self.webView.setCursor(Qt.ArrowCursor)
+            else:
+                self.webView.unsetCursor()
 
         # 判断窗口拖动
         dragType = self.dragParams['type']
@@ -603,6 +610,11 @@ class Window(ShadowWindow):
                 event.size().width(), event.size().height()
                 )
 
+        # workround: it can't be set Antialiasing in setRoundedCorners method
+        # use `self.radius - 1` to workround the problem
+        if self.radius > 1:
+            self.webView.setRoundedCorners(self.webView.rect(), self.radius - 1)
+
     def moveEvent(self, event):
         pos = event.pos()
         oldPos = event.oldPos()
@@ -629,10 +641,37 @@ class Window(ShadowWindow):
         else:
             event.ignore()
 
+    def event(self, event):
+        if event.type() == QEvent.WindowStateChange:
+            if int(self.windowState()) == 3 and \
+               event.oldState() == Qt.WindowMaximized:
+               self.windowLevel = LEVEL1
+            # 3 -> minimized
+            # minimized -> normal
+            elif self.windowLevel == LEVEL1:
+               self.windowLevel = LEVEL2
+            # normal -> minimized
+            elif self.windowLevel == LEVEL2:
+               self.windowLevel = LEVEL3
+            # minimized -> normal -> maximized
+            elif self.windowLevel == LEVEL3:
+               self.maximize()
+               self.windowLevel = LEVEL0
+        return super(Window, self).event(event)
+
     @pyqtSlot()
     def showCenter(self):
         screen = qApp.primaryScreen()
         geometry = screen.availableGeometry()
+        x = geometry.x() + (geometry.width() - self.width())/2
+        y = geometry.y() + (geometry.height() - self.height())/2
+        self.move(x, y)
+        self.show()
+
+    @pyqtSlot()
+    def showCurrentScreenCenter(self):
+        screen = qApp.desktop()
+        geometry = screen.screenGeometry(screen.screenNumber(QCursor.pos()))
         x = geometry.x() + (geometry.width() - self.width())/2
         y = geometry.y() + (geometry.height() - self.height())/2
         self.move(x, y)
