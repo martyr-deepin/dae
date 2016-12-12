@@ -116,7 +116,7 @@ class EWMH:
             self.display.get_atom(property_type),
             Xatom.STRING,
             8,
-            property_content,
+            property_content.encode("ascii"),
             )
         self.display.sync()
 
