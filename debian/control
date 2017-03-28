@@ -5,7 +5,7 @@ Priority: optional
 Build-Depends: debhelper (>= 9), dh-python,
                python3, python3-setuptools
 Standards-Version: 3.9.5
-Homepage: https://gitcafe.com/Deepin/dae/
+Homepage: https://github.com/linuxdeepin/dae/
 
 Package: python3-dae
 Architecture: all

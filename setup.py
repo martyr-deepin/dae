@@ -29,7 +29,7 @@ setup(
     long_description = 'Deepin desktop application engine with PyQt Webkit core',
     author = 'iceleaf',
     author_email = 'kaisheng.ye@gmail.com',
-    url = 'https://gitcafe.com/deepin/dae/',
+    url = 'https://github.com/linuxdeepin/dae/',
     license = 'GPL-3',
     platforms = ['all'],
     packages = ['dae'],
